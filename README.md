@@ -4,20 +4,6 @@ Welcome
 
 ## Usage
 
-#### Init Project using this template
-
-```bash
-export project_name=xxx
-git clone https://github.com/JackonYang/django2-python3-docker-tmpl $project_name
-cd $project_name
-rm -rf .git
-# Update README
-git init && git add . && git commit -m'django2-python3-docker-tmpl v0.1'
-git push -f xxx master
-```
-
-#### Useful commands
-
 Build docker image for python3 & django enviorment, using the Dockerfile in the project root directory.
 
 ```bash
@@ -44,6 +30,14 @@ root@django-docker:/src# make server
 
 now you can access [http://127.0.0.1:8000/heartbeat/](http://127.0.0.1:8000/heartbeat/) in browser.
 
+
+run production mode for testing locally:
+
+```bash
+$ make production
+```
+
+the website is available at [http://127.0.0.1:81](http://127.0.0.1:81), deployed with nginx + uwsgi + wsgi
 
 ## Optional Services
 
@@ -103,3 +97,16 @@ access [http://127.0.0.1:5051/heartbeat/](http://127.0.0.1:5051/heartbeat/) to c
 
 
 then we can add new API and fake data inside to debug with
+
+
+## Init Project using this template
+
+```bash
+export project_name=xxx
+git clone https://github.com/JackonYang/django2-python3-docker-tmpl $project_name
+cd $project_name
+rm -rf .git
+# Update README
+git init && git add . && git commit -m'django2-python3-docker-tmpl v0.1'
+git push -f xxx master
+```
