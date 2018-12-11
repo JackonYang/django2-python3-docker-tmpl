@@ -58,6 +58,8 @@ RUN pip install requests==2.21.0
 RUN pip install django-grappelli==2.12.1
 RUN pip install rollbar==0.14.5
 
+RUN pip install uwsgi==2.0.17.1
+
 COPY ./requirements.txt /src/requirements.txt
 WORKDIR /src
 

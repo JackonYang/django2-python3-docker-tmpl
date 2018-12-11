@@ -10,6 +10,9 @@ test:
 server:
 	$(PY) manage.py runserver 0.0.0.0:8000
 
+production:
+	docker-compose up nginx
+
 
 build:
 	docker-compose build
@@ -35,7 +38,7 @@ redis-client:
 	docker-compose run --service-ports redis-client redis-cli -h redis -p 6379
 
 
-.PHONY: debug test server
+.PHONY: debug test server production
 .PHONY: build clean
 .PHONY: kibana kafka-manager
 .PHONY: kafka
