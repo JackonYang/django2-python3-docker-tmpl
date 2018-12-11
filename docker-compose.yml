@@ -1,0 +1,100 @@
+version: '2'
+
+services:
+
+  web:
+    build:
+      context: .
+      # args:
+      #  - PIP_HOST=host
+      #  - PIP_ROOT_URL=url
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/src
+    environment:
+      - DEFAULT_REDIS_CONN=redis://redis:6379/0
+      - MONITOR_REDIS_CONN=redis://redis:6379/9
+      - DEBUG=True
+    depends_on:
+      - redis
+    command:
+        python manage.py runserver 0.0.0.0:8000
+    hostname: django-docker
+
+  redis:
+    image: redis:3.2.4
+    # image: redis:2.8.23
+    ports:
+      - 6370:6379
+
+  redis-client:
+    image: redis:3.2.4
+    # image: redis:2.8.23
+    # environment:
+    #   - REDIS_HOST=redis
+    #   - REDIS_PORT=6370
+    depends_on:
+      - redis
+
+  mongo:
+    build: ./deploy/mongo
+    volumes:
+      - /mnt/data/proj-name/dump:/mnt/data/dump
+    ports:
+      - 27010:27017
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+    ports:
+      - 3300:3306
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+    ports:
+      - 9210:9200
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - xpack.security.enabled=false
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.5.1
+    ports:
+      - 5600:5601
+    environment:
+      - ELASTICSEARCH_URL=http://es:9200
+    depends_on:
+      - es
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_DELETE_TOPIC_ENABLE=true
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+    ports:
+      - 9090:9092
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+    ports:
+      - 2180:2181
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager:alpine
+    ports:
+      - 9100:9000
+    environment:
+      - ZK_HOSTS=zookeeper:2181
+    depends_on:
+      - zookeeper
+      - kafka
