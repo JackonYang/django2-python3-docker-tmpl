@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  http-mock:
+    build: ./http-mock
+    volumes:
+      - ./http-mock/:/src
+      - ./http-mock/fake-data/:/http-mock
+    ports:
+      - "5051:5051"
