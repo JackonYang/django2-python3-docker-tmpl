@@ -146,7 +146,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
-    # 'DEFAULT_PAGINATION_CLASS': 'utils.pagination.BasePagination',
+    'DEFAULT_PAGINATION_CLASS': 'utils.pagination.BasePagination',
     # 'DATETIME_FORMAT': DATETIME_FORMAT,
     # 'DATE_FORMAT': DATE_FORMAT,
 }
