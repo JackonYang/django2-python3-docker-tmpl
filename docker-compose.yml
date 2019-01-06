@@ -2,7 +2,7 @@ version: '2'
 
 services:
 
-  web:
+  web:  # local debug
     build:
       context: .
       # args:
@@ -12,32 +12,52 @@ services:
       - 8000:8000
     volumes:
       - .:/src
+      # - /mnt/data/-misc-zone/:/mnt/data/<project_name>-misc-zone/
     environment:
       - DEFAULT_REDIS_CONN=redis://redis:6379/0
       - MONITOR_REDIS_CONN=redis://redis:6379/9
       - DEBUG=True
+      # - MISC_ZONE_ROOT=/mnt/data/<project_name>-misc-zone/
+    depends_on:
+      - redis
+    command:
+        make server
+    hostname: debug-server
+
+  production:
+    build:
+      context: .
+    volumes:
+      - .:/src
+      # - /mnt/data/<project_name>-misc-zone/:/mnt/data/<project_name>-misc-zone/
+    environment:
+      - DEFAULT_REDIS_CONN=redis://redis:6379/0
+      - MONITOR_REDIS_CONN=redis://redis:6379/9
+      - DEBUG=False
+      # - MISC_ZONE_ROOT=/mnt/data/<project_name>-misc-zone/
     depends_on:
       - redis
     command:
         uwsgi --ini deploy/uwsgi/uwsgi.ini
-    hostname: django-docker
+    hostname: production-server
 
   nginx:
     image: nginx:1.14-alpine
     volumes:
       - .:/src
       - ./deploy/nginx/site.conf:/etc/nginx/conf.d/default.conf
+      # - /mnt/data/<project_name>-misc-zone/:/mnt/data/<project_name>-misc-zone/
     ports:
       - 81:80
     depends_on:
-      - web
+      - production
 
 
   redis:
     image: redis:3.2.4
     # image: redis:2.8.23
-    ports:
-      - 6370:6379
+    # ports:
+    #   - 6370:6379
 
   redis-client:
     image: redis:3.2.4
@@ -53,24 +73,25 @@ services:
     build: ./deploy/mongo
     volumes:
       - /mnt/data/proj-name/dump:/mnt/data/dump
-    ports:
-      - 27010:27017
+    # ports:
+    #   - 27010:27017
 
   mysql:
     image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=root123
-    ports:
-      - 3300:3306
+    # ports:
+    #   - 3300:3306
 
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
-    ports:
-      - 9210:9200
+    # ports:
+    #   - 9210:9200
     environment:
       - http.host=0.0.0.0
       - transport.host=127.0.0.1
       - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:5.5.1
@@ -89,8 +110,8 @@ services:
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_DELETE_TOPIC_ENABLE=true
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
-    ports:
-      - 9090:9092
+    # ports:
+    #   - 9090:9092
     depends_on:
       - zookeeper
 
@@ -98,8 +119,8 @@ services:
     image: confluentinc/cp-zookeeper:latest
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
-    ports:
-      - 2180:2181
+    # ports:
+    #   - 2180:2181
 
   kafka-manager:
     image: sheepkiller/kafka-manager:alpine
@@ -110,3 +131,8 @@ services:
     depends_on:
       - zookeeper
       - kafka
+
+# networks:
+#   default:
+#     external:
+#       name: <project_name>_blue
