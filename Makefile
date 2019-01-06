@@ -33,6 +33,17 @@ build:
 clean:
 	$(DC) down
 
+############# data and migratations
+
+makemigrations:
+	$(PY) manage.py makemigrations
+
+migrate:
+	$(PY) manage.py migrate
+
+superuser:
+	$(PY) manage.py createsuperuser
+
 # Services
 
 kibana:
@@ -58,3 +69,4 @@ redis-client:
 .PHONY: kibana kafka-manager
 .PHONY: kafka
 .PHONY: redis redis-client
+.PHONY: makemigrations migrate superuser
