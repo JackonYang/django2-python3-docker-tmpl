@@ -60,6 +60,8 @@ RUN pip install rollbar==0.14.5
 
 RUN pip install uwsgi==2.0.17.1
 
+RUN pip install oss2==2.6.0
+
 COPY ./requirements.txt /src/requirements.txt
 WORKDIR /src
 
