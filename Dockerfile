@@ -62,6 +62,20 @@ RUN pip install uwsgi==2.0.17.1
 
 RUN pip install oss2==2.6.0
 
+# pygit2 and its dependencies
+RUN apt-get install -y wget
+RUN apt-get install -y cmake
+
+RUN wget https://github.com/libgit2/libgit2/archive/v0.27.0.tar.gz && \
+tar xzf v0.27.0.tar.gz && \
+cd libgit2-0.27.0/ && \
+cmake . && \
+make && \
+make install
+RUN ldconfig
+RUN pip install pygit2==0.27.3
+
+
 COPY ./requirements.txt /src/requirements.txt
 WORKDIR /src
 
