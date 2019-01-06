@@ -7,6 +7,8 @@ from .constants import *  # noqa F403
 DEFAULT_REDIS_CONN = os.environ.get('DEFAULT_REDIS_CONN', 'redis://127.0.0.1:6379/0')
 MONITOR_REDIS_CONN = os.environ.get('MONITOR_REDIS_CONN', 'redis://127.0.0.1:6379/9')
 
+MISC_ZONE_ROOT = os.environ.get('MISC_ZONE_ROOT', BASE_DIR)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -15,7 +17,7 @@ MONITOR_REDIS_CONN = os.environ.get('MONITOR_REDIS_CONN', 'redis://127.0.0.1:637
 SECRET_KEY = 'b!ubouy!=45)j6*ukfrmtc38bfzzn5(@0wvj*39i+jkkdpvbyu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get('DEBUG', 'True').upper() == 'TRUE')
 
 ALLOWED_HOSTS = ['*']
 
@@ -23,6 +25,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,10 +71,15 @@ WSGI_APPLICATION = 'wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+if DEBUG:
+    DB_PATH = BASE_DIR
+else:
+    DB_PATH = MISC_ZONE_ROOT
+
 DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    #     'NAME': os.path.join(DB_PATH, 'db.sqlite3'),
     # }
 }
 
@@ -131,6 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(MISC_ZONE_ROOT, 'static')
 
 
 REST_FRAMEWORK = {
@@ -151,4 +160,4 @@ REST_FRAMEWORK = {
     # 'DATE_FORMAT': DATE_FORMAT,
 }
 
-# from ._logging import *  # noqa
+from ._logging import *  # noqa
