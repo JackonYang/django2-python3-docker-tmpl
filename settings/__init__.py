@@ -19,7 +19,14 @@ SECRET_KEY = 'b!ubouy!=45)j6*ukfrmtc38bfzzn5(@0wvj*39i+jkkdpvbyu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG', 'True').upper() == 'TRUE')
 
+DOMAIN_NAME = os.getenv('DOMAIN_NAME', 'localhost')
+
 ALLOWED_HOSTS = ['*']
+# if not DEBUG:
+#     ALLOWED_HOSTS = [
+#         DOMAIN_NAME,
+#         '.{}'.format(DOMAIN_NAME),
+#     ]
 
 
 # Application definition
@@ -32,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -42,6 +50,7 @@ MIDDLEWARE = [
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 ]
 
 ROOT_URLCONF = 'settings.urls'
@@ -53,7 +62,9 @@ APPEND_SLASH = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'settings/templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,6 +151,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(MISC_ZONE_ROOT, 'static')
+
+
+# Auth (login)
+
+# AUTH_USER_MODEL = 'accounts.User_'
 
 
 REST_FRAMEWORK = {
