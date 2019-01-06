@@ -1,5 +1,8 @@
 # .gitignore by jackon.me
 
+*.log
+db.sqlite3
+
 *.py[cod]
 
 #vim
@@ -31,4 +34,18 @@ nosetests.xml
 .project
 .pydevproject
 
+
+# Windows
+[Dd]esktop.ini
+Thumbs.db
+$RECYCLE.BIN/
+
+# macOS
 .DS_Store
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# Node.js
+node_modules/
