@@ -1,8 +1,9 @@
 PY?=python
 PIP?=pip
+DC?=docker-compose -p `./build_project_name.sh`
 
 debug:
-	docker-compose run --service-ports web /bin/bash
+	$(DC) run --service-ports web /bin/bash
 
 test:
 	pytest --cov ./ --cov-report term-missing:skip-covered --capture=no -p no:cacheprovider
@@ -10,35 +11,49 @@ test:
 server:
 	$(PY) manage.py runserver 0.0.0.0:8000
 
-production:
-	docker-compose up nginx
+stage:
+	$(DC) run -p 81:80 production /bin/bash
 
+uwsgiserver:
+	uwsgi --http :80 --wsgi-file wsgi.py
+
+prod-server-only:
+	$(DC) up -d production
+
+release:
+	$(DC) up -d crawler
+	$(DC) up -d production
+
+nginx:
+	$(DC) up nginx
 
 build:
-	docker-compose build
+	$(DC) build
 
 clean:
-	docker-compose down
+	$(DC) down
 
 # Services
 
 kibana:
-	docker-compose up kibana
+	$(DC) up kibana
 
 kafka-manager:
-	docker-compose up kafka-manager
+	$(DC) up kafka-manager
 
 kafka:
-	docker-compose up kafka
+	$(DC) up kafka
 
 redis:
-	docker-compose up -d redis
+	$(DC) up -d redis
 
 redis-client:
-	docker-compose run --service-ports redis-client redis-cli -h redis -p 6379
+	$(DC) run --service-ports redis-client redis-cli -h redis -p 6379
 
 
-.PHONY: debug test server production
+.PHONY: debug test server
+.PHONY: stage uwsgiserver prod-server-only
+.PHONY: release nginx
 .PHONY: build clean
 .PHONY: kibana kafka-manager
 .PHONY: kafka
