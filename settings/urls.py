@@ -18,9 +18,11 @@ Including another URLconf
 from django.urls import path, include
 # from django.contrib import admin
 
+from heartbeat import views as heartbeat_views
 
 urlpatterns = [
     # path('grappelli/', include('grappelli.urls')),  # grappelli URLS
     # path('admin/', admin.site.urls),
+    path('', heartbeat_views.default_home, name='default_home'),
     path('heartbeat/', include('heartbeat.urls')),
 ]
