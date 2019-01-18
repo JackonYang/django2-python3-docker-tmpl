@@ -31,7 +31,7 @@ RUN pip install --upgrade pip
 # python packages
 
 # https://www.djangoproject.com/download/#supported-versions
-RUN pip install django==2.1.4
+RUN pip install django==2.1.5
 
 # restful framework
 # http://www.django-rest-framework.org/topics/release-notes/
